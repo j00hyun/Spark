@@ -8,7 +8,7 @@ wordsep = re.compile(r'[%s\s]+' % re.escape(string.punctuation))
 inputs = sys.argv[1] # input file path
 output = sys.argv[2] # output directory
 
-conf = SparkConf().setAppName('word count') # configure and start a Spark context named word count
+conf = SparkConf().setAppName('word count improved') # configure and start a Spark context named word count
 sc = SparkContext(conf=conf)
 assert sys.version_info >= (3, 5)  # make sure we have Python 3.5+
 assert sc.version >= '2.3'  # make sure we have Spark 2.3+
@@ -28,6 +28,8 @@ def output_format(kv):
 
 text = sc.textFile(inputs) # reads the input text file(s) into an RDD
 
+# repartition to increase parallelism (e.g., 64 partitions)
+text = text.repartition(64)
 # split lines into words using regax
 tokens = text.flatMap(lambda line: wordsep.split(line))
 # convert all words to lowercase
