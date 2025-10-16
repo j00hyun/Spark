@@ -40,12 +40,16 @@ def main(inputs, output):
 
     # Join the filtered data with the hourly maximums to find the most-viewed page(s)
     # If there’s a tie (multiple pages with the same view count), keep them all
-    most_viewed_pages = filtered.join(max_views, on='hour') \
+    # Use the broadcast hint to tell Spark to replicate the small 'max_views' DataFrame across all nodes for a faster join
+    most_viewed_pages = filtered.join(max_views.hint("broadcast"), on='hour') \
                                 .where(filtered.views == max_views.max_views)
 
     # Select only relevant columns and sort by hour (and title for ties)
     result = most_viewed_pages.select('hour', 'title', 'views') \
                               .orderBy('hour', 'title')
+
+    # Display the logical and physical execution plan in the console
+    result.explain()
 
     # Write the output as newline-delimited JSON files
     result.write.json(output, mode='overwrite')
