@@ -41,7 +41,7 @@ def main(inputs, output):
     min_temp = (base
                 .where(F.col('observation') == 'TMIN')  # minimum temperature
                 .groupBy('date', 'station')
-                .agg(F.max('value').alias('min_value'))
+                .agg(F.min('value').alias('min_value'))
                 .select('station', 'date', (F.col('min_value') / F.lit(10.0)).alias('min_value')))
 
     # Join TMAX and TMIN DataFrames to compute the temperature range for each station/day
