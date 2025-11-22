@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.SQLTransformer","timestamp":1763797572785,"sparkVersion":"4.0.1","uid":"SQLTransformer_0575e6385ab1","paramMap":{"statement":"\n                SELECT *,\n                       COALESCE(yesterday_tmax, 0.0) AS yesterday_tmax_filled\n                FROM __THIS__\n            "},"defaultParamMap":{}}
